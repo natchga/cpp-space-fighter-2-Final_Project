@@ -110,6 +110,15 @@
     <ClCompile Include="AircraftType.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GameOver.cpp">
+      <Filter>Source Files\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="Victory.cpp">
+      <Filter>Source Files\Screens</Filter>
+    </ClCompile>
+    <ClCompile Include="Score.cpp">
+      <Filter>Source Files\Score</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenuScreen.h">
@@ -171,6 +180,15 @@
     </ClInclude>
     <ClInclude Include="AircraftType.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GameOver.h">
+      <Filter>Source Files\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="Victory.h">
+      <Filter>Source Files\Screens</Filter>
+    </ClInclude>
+    <ClInclude Include="Score.h">
+      <Filter>Source Files\Score</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

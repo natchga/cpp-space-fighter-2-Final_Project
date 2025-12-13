@@ -187,6 +187,7 @@
     <ClCompile Include="MainMenuScreen.cpp" />
     <ClCompile Include="PlayerShip.cpp" />
     <ClCompile Include="Projectile.cpp" />
+    <ClCompile Include="Score.cpp" />
     <ClCompile Include="SelectAircraftScreen.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="SpaceFighter.cpp" />
@@ -216,6 +217,7 @@
     <ClInclude Include="MainMenuScreen.h" />
     <ClInclude Include="PlayerShip.h" />
     <ClInclude Include="Projectile.h" />
+    <ClInclude Include="Score.h" />
     <ClInclude Include="SelectAircraftScreen.h" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="SpaceFighter.h" />

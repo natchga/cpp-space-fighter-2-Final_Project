@@ -6,7 +6,8 @@
 #include "PlayerShip.h"  
 #include "Blaster.h"     
 #include "Projectile.h"     
-
+#include "GameOver.h"
+#include "Victory.h"
 
 
 GameplayScreen::GameplayScreen(AircraftType aircraftType)
