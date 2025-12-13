@@ -1,21 +1,79 @@
 
 #include "PlayerShip.h"
 #include "Level.h"
+#include "AircraftType.h"
+#include "Projectile.h"
+#include "Blaster.h"
+
+
+
+
+// User Stored selection
+PlayerShip::PlayerShip(AircraftType type): m_type(type) 
+{
+	// Attach Main Blaster if not already present
+	if (!GetWeapon("Main Blaster"))
+	{
+		Blaster* pBlaster = new Blaster("Main Blaster");
+		AttachItem(pBlaster, Vector2::UNIT_Y * -20);
+	}
+}
+
+
 
 void PlayerShip::LoadContent(ResourceManager& resourceManager)
 {
 	ConfineToScreen();
-	SetResponsiveness(0.1);
+	SetResponsiveness(0.1f);
 
-	m_pTexture = resourceManager.Load<Texture>("Textures\\PlayerShip.png");
+	switch (m_type)
+	{
+	case AircraftType::LightFighter:
+		std::cout << "m_type value: " << static_cast<int>(m_type) << std::endl;
 
-	AudioSample* pAudio = resourceManager.Load<AudioSample>("Audio\\Effects\\Laser.wav");
-	pAudio->SetVolume(0.5f);
-	GetWeapon("Main Blaster")->SetFireSound(pAudio);
+		m_pTexture = resourceManager.Load<Texture>("Textures\\LightFighterShip.png");
+		SetSpeed(450);
+		break;
+
+	case AircraftType::HeavyBomber:
+		m_pTexture = resourceManager.Load<Texture>("Textures\\HeavyBomberShip.png");
+		SetSpeed(250);
+		break;
+
+	case AircraftType::DefaultFighter:
+	default:
+		m_pTexture = resourceManager.Load<Texture>("Textures\\PlayerShip.png");
+		SetSpeed(250);
+
+		Weapon* pWeapon = GetWeapon("Main Blaster");
+		if (pWeapon)
+		{
+			AudioSample* pAudio = resourceManager.Load<AudioSample>("Audio\\Effects\\Laser.wav");
+			pAudio->SetVolume(0.5f);
+			pWeapon->SetFireSound(pAudio);
+		}
+		break;
+	}
 
 	SetPosition(Game::GetScreenCenter() + Vector2::UNIT_Y * 300);
-
 }
+
+
+
+//void PlayerShip::LoadContent(ResourceManager& resourceManager)
+//{
+//	ConfineToScreen();
+//	SetResponsiveness(0.1);
+//
+//	m_pTexture = resourceManager.Load<Texture>("Textures\\PlayerShip.png");
+//
+//	AudioSample* pAudio = resourceManager.Load<AudioSample>("Audio\\Effects\\Laser.wav");
+//	pAudio->SetVolume(0.5f);
+//	GetWeapon("Main Blaster")->SetFireSound(pAudio);
+//
+//	SetPosition(Game::GetScreenCenter() + Vector2::UNIT_Y * 300);
+//
+//}
 
 
 void PlayerShip::Initialize(Level* pLevel, Vector2& startPosition)

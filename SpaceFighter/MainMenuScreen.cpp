@@ -1,6 +1,8 @@
 
 #include "MainMenuScreen.h"
 #include "GameplayScreen.h"
+#include "SelectAircraftScreen.h"
+
 
 
 MainMenuScreen::MainMenuScreen()
@@ -44,7 +46,7 @@ void MainMenuScreen::LoadContent(ResourceManager& resourceManager)
 	// when "Start Game" is selected, replace the "SetRemoveCallback" delegate
 	// so that it doesn't quit the game (originally set in the constructor)
 	GetMenuItem(START_GAME)->SetOnSelect([this](){
-		SetOnRemove([this](){ AddScreen(new GameplayScreen()); });
+		SetOnRemove([this](){ AddScreen(new SelectAircraftScreen()); }); //When start is selected, Open the Aircraft selection screen
 		Exit();
 	});
 

@@ -9,8 +9,8 @@ class Level01 :	public Level
 public:
 	
 	/** @brief Instantiate a level object. */
-	Level01() { }
-	virtual ~Level01() { }
+	Level01(AircraftType type);  // pass aircraft type to base Level
+	virtual ~Level01() {}
 
 	/** @brief Load the content for the level, including game objects and resources.
 		@param resourceManager A reference to the game's resource manager,

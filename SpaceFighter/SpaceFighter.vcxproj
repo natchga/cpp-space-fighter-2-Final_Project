@@ -170,6 +170,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="AircraftType.cpp" />
     <ClCompile Include="BioEnemyShip.cpp" />
     <ClCompile Include="Blaster.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
@@ -186,7 +187,6 @@
     <ClCompile Include="MainMenuScreen.cpp" />
     <ClCompile Include="PlayerShip.cpp" />
     <ClCompile Include="Projectile.cpp" />
-    <ClCompile Include="Score.cpp" />
     <ClCompile Include="SelectAircraftScreen.cpp" />
     <ClCompile Include="Ship.cpp" />
     <ClCompile Include="SpaceFighter.cpp" />
@@ -200,6 +200,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AircraftType.h" />
     <ClInclude Include="BioEnemyShip.h" />
     <ClInclude Include="Blaster.h" />
     <ClInclude Include="CollisionManager.h" />
@@ -215,7 +216,6 @@
     <ClInclude Include="MainMenuScreen.h" />
     <ClInclude Include="PlayerShip.h" />
     <ClInclude Include="Projectile.h" />
-    <ClInclude Include="Score.h" />
     <ClInclude Include="SelectAircraftScreen.h" />
     <ClInclude Include="Ship.h" />
     <ClInclude Include="SpaceFighter.h" />

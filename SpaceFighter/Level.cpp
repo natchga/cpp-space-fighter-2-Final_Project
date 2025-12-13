@@ -6,8 +6,9 @@
 
 std::vector<Explosion *> Level::s_explosions;
 
-// Collision Callback Functions
 
+
+// Collision Callback Functions
 /** brief Callback function for when the player shoots an enemy. */
 void PlayerShootsEnemy(GameObject *pObject1, GameObject *pObject2)
 {
@@ -29,8 +30,9 @@ void PlayerCollidesWithEnemy(GameObject *pObject1, GameObject *pObject2)
 }
 
 
-Level::Level()
+Level::Level(AircraftType type) : m_aircraftType(type)
 {
+
 	m_sectorSize.X = 64;
 	m_sectorSize.Y = 64;
 
@@ -45,10 +47,10 @@ Level::Level()
 	GameObject::SetCurrentLevel(this);
 
 	// Setup player ship
-	m_pPlayerShip = new PlayerShip();
-	Blaster *pBlaster = new Blaster("Main Blaster");
+	//m_pPlayerShip = new PlayerShip(AircraftType::DefaultFighter);//Must be dele
+	/*Blaster *pBlaster = new Blaster("Main Blaster");
 	pBlaster->SetProjectilePool(&m_projectiles);
-	m_pPlayerShip->AttachItem(pBlaster, Vector2::UNIT_Y * -20);
+	m_pPlayerShip->AttachItem(pBlaster, Vector2::UNIT_Y * -20);*/
 
 	for (int i = 0; i < 100; i++)
 	{
@@ -57,8 +59,8 @@ Level::Level()
 		AddGameObject(pProjectile);
 	}
 	
-	m_pPlayerShip->Activate();
-	AddGameObject(m_pPlayerShip);
+	//m_pPlayerShip->Activate();
+	//AddGameObject(m_pPlayerShip);
 
 	// Setup collision types
 	CollisionManager *pC = GetCollisionManager();
@@ -87,7 +89,8 @@ Level::~Level()
 
 void Level::LoadContent(ResourceManager& resourceManager)
 {
-	m_pPlayerShip->LoadContent(resourceManager);
+	if (m_pPlayerShip)
+		m_pPlayerShip->LoadContent(resourceManager);
 
 	// Setup explosions if they haven't been already
 	Explosion* pExplosion;

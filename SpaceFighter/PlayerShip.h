@@ -2,6 +2,7 @@
 #pragma once
 
 #include "Ship.h"
+#include "AircraftType.h"
 
 /** @brief Represents the player's ship. */
 class PlayerShip : public Ship
@@ -10,13 +11,18 @@ class PlayerShip : public Ship
 public:
 
 	/** @brief Creates a new instance of PlayerShip. */
-	PlayerShip() { }
+	/*PlayerShip(AircraftType type = AircraftType::DefaultFighter)
+		: m_type(type){ }*/
+
+	PlayerShip(AircraftType type);
+
 	virtual ~PlayerShip() { }
+
 
 	/** @brief Loads the content for the player ship.
 		@param resourceManager A reference to the game's resource manager,
 		used for loading and managing game assets (resources). */
-	virtual void LoadContent(ResourceManager& resourceManager);
+	virtual void LoadContent(ResourceManager& resourceManager) ;
 
 	/** @brief Updates the player ship.
 		@param gameTime A reference to the game time object. */
@@ -81,5 +87,8 @@ private:
 	bool m_isConfinedToScreen = false;
 
 	Texture* m_pTexture = nullptr;
+
+	//Added by @Emilien
+	AircraftType m_type; // Store which aircraf selection
 
 };

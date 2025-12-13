@@ -2,6 +2,10 @@
 #pragma once
 
 #include "KatanaEngine.h"
+#include "AircraftType.h"
+#include "Level.h"
+#include "Projectile.h" 
+
 
 using namespace KatanaEngine;
 
@@ -17,14 +21,21 @@ class GameplayScreen : public Screen
 
 public:
 
+	// Constructors
+
 	/** @brief Instantiate a gameplay screen object.
 		@param levelIndex The index of the level to load. */
-	GameplayScreen(const int levelIndex = 0);
-	virtual ~GameplayScreen() { }
+
+	//GameplayScreen(const int levelIndex = 0);
+	GameplayScreen(AircraftType aircraftType);
+
+	virtual ~GameplayScreen() {}
+
+	// Screen methods
 
 	/** @brief Load the content for the screen.
 		@param resourceManager A reference to the game's resource manager. */
-	virtual void LoadContent(ResourceManager& resourceManager);
+	virtual void LoadContent(ResourceManager& resourceManager) ;
 
 	/** @brief Handle input for the screen.
 		@param input The current state of all player input devices. */
@@ -53,4 +64,7 @@ private:
 
 	ResourceManager *m_pResourceManager = nullptr;
 
+	/*Added by @Emilien*/
+	AircraftType m_aircraftType;
+	bool m_useAircraftType = false; // Flag to know which constructor was used
 };

@@ -1,8 +1,10 @@
 
-
 #include "Level01.h"
 #include "BioEnemyShip.h"
 
+
+
+Level01::Level01(AircraftType type): Level(type) { }
 
 void Level01::LoadContent(ResourceManager& resourceManager)
 {
