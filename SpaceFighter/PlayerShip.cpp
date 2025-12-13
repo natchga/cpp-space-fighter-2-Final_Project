@@ -28,46 +28,56 @@ void PlayerShip::LoadContent(ResourceManager& resourceManager)
 
 	switch (m_type)
 	{
-	case AircraftType::LightFighter:
-		std::cout << "m_type value: " << static_cast<int>(m_type) << std::endl;
-
-		m_pTexture = resourceManager.Load<Texture>("Textures\\LightFighterShip.png");
-		SetSpeed(500);
-		Weapon* pWeapon = GetWeapon("Main Blaster");
-		if (pWeapon)
+		case AircraftType::LightFighter:
 		{
-			AudioSample* pAudio = resourceManager.Load<AudioSample>("Audio\\Effects\\Laser.wav");
-			pAudio->SetVolume(0.5f);
-			pWeapon->SetFireSound(pAudio);
-		}
-		break;
+			m_pTexture = resourceManager.Load<Texture>("Textures\\LightFighterShip.png");
+			SetSpeed(500);
 
-	case AircraftType::HeavyBomber:
-		m_pTexture = resourceManager.Load<Texture>("Textures\\HeavyBomberShip.png");
-		SetSpeed(250);
-		Weapon* pWeapon = GetWeapon("Main Blaster");
-		if (pWeapon)
+			Weapon* pWeapon = GetWeapon("Main TriggerType");
+			if (pWeapon)
+			{
+				AudioSample* pAudio =
+					resourceManager.Load<AudioSample>("Audio\\Effects\\Laser.wav");
+				pAudio->SetVolume(0.5f);
+				pWeapon->SetFireSound(pAudio);
+			}
+			break;
+		}
+
+		case AircraftType::HeavyBomber:
 		{
-			AudioSample* pAudio = resourceManager.Load<AudioSample>("Audio\\Effects\\Laser.wav");
-			pAudio->SetVolume(0.5f);
-			pWeapon->SetFireSound(pAudio);
+			m_pTexture = resourceManager.Load<Texture>("Textures\\HeavyBomberShip.png");
+			SetSpeed(250);
+
+			Weapon* pWeapon = GetWeapon("Main Projectile");
+			if (pWeapon)
+			{
+				AudioSample* pAudio =
+					resourceManager.Load<AudioSample>("Audio\\Effects\\Laser.wav");
+				pAudio->SetVolume(0.5f);
+				pWeapon->SetFireSound(pAudio);
+			}
+			break;
 		}
-		break;
 
-	case AircraftType::DefaultFighter:
-	default:
-		m_pTexture = resourceManager.Load<Texture>("Textures\\PlayerShip.png");
-		SetSpeed(250);
-
-		Weapon* pWeapon = GetWeapon("Main Blaster");
-		if (pWeapon)
+		case AircraftType::DefaultFighter:
+		default:
 		{
-			AudioSample* pAudio = resourceManager.Load<AudioSample>("Audio\\Effects\\Laser.wav");
-			pAudio->SetVolume(0.5f);
-			pWeapon->SetFireSound(pAudio);
+			m_pTexture = resourceManager.Load<Texture>("Textures\\PlayerShip.png");
+			SetSpeed(250);
+
+			Weapon* pWeapon = GetWeapon("Main Blaster");
+			if (pWeapon)
+			{
+				AudioSample* pAudio =
+					resourceManager.Load<AudioSample>("Audio\\Effects\\Laser.wav");
+				pAudio->SetVolume(0.5f);
+				pWeapon->SetFireSound(pAudio);
+			}
+			break;
 		}
-		break;
 	}
+
 
 	SetPosition(Game::GetScreenCenter() + Vector2::UNIT_Y * 300);
 }
