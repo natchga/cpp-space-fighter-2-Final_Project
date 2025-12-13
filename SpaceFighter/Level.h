@@ -16,6 +16,16 @@ class Level
 
 public:
 
+	bool HasHadActiveEnemy() const { return m_hasHadActiveEnemy; } // Getter/setter to see if enemies have been active -- tommy
+
+	void SetHasHadActiveEnemy(bool value) { m_hasHadActiveEnemy = value; }
+	
+
+	virtual bool IsComplete() const; // checks to see if game is complete - tommy
+
+	//-----------------------------------------------------
+	// Added by @Emilien
+
 	/** @brief Instantiate a level object. */
 	Level();
 	virtual ~Level();
@@ -129,6 +139,10 @@ protected:
 	virtual AudioSample* GetBackgroundAudio() { return m_pAudio; }
 
 private:
+
+	bool m_hasSpawnedEnemies = false; // set enemy spawn to false - tommy
+	
+	bool m_hasHadActiveEnemy = false; // tracks to see if enemies have moved - tommy
 
 	static std::vector<Explosion *> s_explosions;
 	//std::vector<Explosion *>::iterator m_explosionIt;

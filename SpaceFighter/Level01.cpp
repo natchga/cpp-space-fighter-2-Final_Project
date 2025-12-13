@@ -6,6 +6,7 @@
 
 void Level01::LoadContent(ResourceManager& resourceManager)
 {
+
 	// Setup enemy ships
 	Texture *pTexture = resourceManager.Load<Texture>("Textures\\BioEnemyShip.png");
 
@@ -42,6 +43,7 @@ void Level01::LoadContent(ResourceManager& resourceManager)
 		pEnemy->SetCurrentLevel(this);
 		pEnemy->Initialize(position, (float)delay);
 		AddGameObject(pEnemy);
+
 	}
 
 	// Setup background

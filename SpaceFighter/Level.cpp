@@ -140,6 +140,18 @@ void Level::Update(const GameTime& gameTime)
 	for (Explosion *pExplosion : s_explosions) pExplosion->Update(gameTime);
 
 	if (!m_pPlayerShip->IsActive()) GetGameplayScreen()->Exit();
+
+	if (!m_hasHadActiveEnemy)  // once any enemy have become active - set to true. -- tommy
+	{
+		for (GameObject* pObject : m_gameObjects)
+		{
+			if (dynamic_cast<EnemyShip*>(pObject) && pObject->IsActive())
+			{
+				m_hasHadActiveEnemy = true;
+				break;
+			}
+		}
+	}
 }
 
 
@@ -255,3 +267,20 @@ void Level::Draw(SpriteBatch& spriteBatch)
 	for (Explosion* pExplosion : s_explosions) pExplosion->Draw(spriteBatch);
 	spriteBatch.End();
 }
+
+bool Level::IsComplete() const
+{
+	// Don’t allow victory until at least one enemy has actually become active
+	if (!m_hasHadActiveEnemy)
+		return false;
+
+	for (GameObject* pObject : m_gameObjects)
+	{
+		if (dynamic_cast<EnemyShip*>(pObject) && pObject->IsActive())
+			return false;
+	}
+
+	return true;
+}
+
+

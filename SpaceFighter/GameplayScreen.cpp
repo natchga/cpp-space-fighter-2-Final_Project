@@ -3,9 +3,21 @@
 #include "MainMenuScreen.h"
 #include "Level.h"
 #include "Level01.h"
+#include "PlayerShip.h"  
+#include "Blaster.h"     
+#include "Projectile.h"     
+#include "GameOver.h"
+#include "Victory.h"
+#include "Score.h"
 
-GameplayScreen::GameplayScreen(const int levelIndex)
-	: m_levelIndex(levelIndex)
+
+
+
+GameplayScreen::GameplayScreen(AircraftType aircraftType)
+    : m_levelIndex(0),
+    m_pLevel(nullptr),
+    m_pResourceManager(nullptr),
+    m_aircraftType(aircraftType)
 {
 	SetTransitionInTime(1);
 	SetTransitionOutTime(3);
@@ -39,10 +51,46 @@ void GameplayScreen::HandleInput(const InputState& input)
 	m_pLevel->HandleInput(input);
 }
 
-void GameplayScreen::Update(const GameTime& gameTime)
+void GameplayScreen::Update(const GameTime& gameTime) // updated the update to see if the game is over or a victory -- tommy
 {
-	m_pLevel->Update(gameTime);
+
+    m_pLevel->Update(gameTime);
+
+    if (m_gameEnded)
+        return;
+
+    PlayerShip* pPlayer = m_pLevel->GetPlayerShip();
+
+    // gives us a gameover screen oncce done.
+    if (pPlayer && !pPlayer->IsActive())
+    {
+        m_gameEnded = true;
+
+        SetOnRemove([this]()
+            {
+                AddScreen(new GameOverScreen());
+            });
+
+        Exit();
+        return;
+    }
+
+    // gives us a victory screen once done.
+    if (m_pLevel->IsComplete())
+    {
+        m_gameEnded = true; 
+
+        SetOnRemove([this]()
+            {
+                AddScreen(new VictoryScreen());
+            });
+
+        Exit();
+        return;
+    }
 }
+
+
 
 void GameplayScreen::Draw(SpriteBatch& spriteBatch)
 {

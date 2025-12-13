@@ -45,6 +45,8 @@ public:
 
 private:
 
+	bool m_gameEnded = false; // checks to see if the game is over. - Tommy
+
 	int m_levelIndex = 0;
 
 	Level *m_pLevel = nullptr;

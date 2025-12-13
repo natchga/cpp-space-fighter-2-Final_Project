@@ -1,6 +1,6 @@
 
 #include "EnemyShip.h"
-
+#include "Score.h" 
 
 EnemyShip::EnemyShip()
 {
@@ -42,5 +42,12 @@ void EnemyShip::Initialize(const Vector2 position, const double delaySeconds)
 
 void EnemyShip::Hit(const float damage)
 {
+	const float hpBefore = GetHitPoints();
 	Ship::Hit(damage);
+
+	const float hpAfter = GetHitPoints();
+	if (hpBefore > 0 && hpAfter <= 0)
+	{
+		ScoreSystem::AddEnemyDestroyed();
+	}
 }
