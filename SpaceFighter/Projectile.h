@@ -3,6 +3,8 @@
 
 #include "KatanaEngine.h"
 #include "GameObject.h"
+#include "Weapon.h"
+#include "Projectile.h"
 
 /** @brief Represents a projectile that can be fired by a weapon. */
 class Projectile : public GameObject
@@ -30,6 +32,15 @@ public:
 		@param position The position to activate the projectile at.
 		@param wasShotByPlayer A flag to determine if the projectile was fired by the player. */
 	virtual void Activate(const Vector2 &position, bool wasShotByPlayer = true);
+
+	//===============Added by @Emilien ===============
+	 
+	
+	//**New overload** for weapons that pass velocity and friendly flag
+	void Activate(const Vector2& position, bool isFriendly, const Vector2& velocity);
+
+
+	//===============End==============================
 
 	/** @brief Get the amount of damage the projectile will deal.
 		@return The amount of damage the projectile will deal. */
@@ -85,5 +96,9 @@ private:
 	Vector2 m_direction;
 
 	bool m_wasShotByPlayer = true;
+
+	// Added by @Emilien for new Activate overload
+	Vector2 m_velocity;
+	bool m_isFriendly = true;
 };
 

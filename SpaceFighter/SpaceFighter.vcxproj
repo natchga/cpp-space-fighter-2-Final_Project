@@ -170,7 +170,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="AircraftType.cpp" />
     <ClCompile Include="BioEnemyShip.cpp" />
     <ClCompile Include="Blaster.cpp" />
     <ClCompile Include="CollisionManager.cpp" />
@@ -190,7 +189,9 @@
     <ClCompile Include="Score.cpp" />
     <ClCompile Include="SelectAircraftScreen.cpp" />
     <ClCompile Include="Ship.cpp" />
+    <ClCompile Include="SingleShot.cpp" />
     <ClCompile Include="SpaceFighter.cpp" />
+    <ClCompile Include="SpreadShot.cpp" />
     <ClCompile Include="TriggerType.cpp" />
     <ClCompile Include="Victory.cpp" />
     <ClCompile Include="Weapon.cpp" />
@@ -220,7 +221,9 @@
     <ClInclude Include="Score.h" />
     <ClInclude Include="SelectAircraftScreen.h" />
     <ClInclude Include="Ship.h" />
+    <ClInclude Include="SingleShot.h" />
     <ClInclude Include="SpaceFighter.h" />
+    <ClInclude Include="SpreadShot.h" />
     <ClInclude Include="TriggerType.h" />
     <ClInclude Include="Victory.h" />
     <ClInclude Include="Weapon.h" />

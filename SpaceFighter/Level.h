@@ -17,6 +17,7 @@ class Level
 public:
 	//-----------------------------------------------------
 	// Added by @Emilien
+	   std::vector<Weapon*> CreateWeaponsForAircraft(AircraftType type);
 
 	bool HasHadActiveEnemy() const { return m_hasHadActiveEnemy; } // Getter/setter to see if enemies have been active -- tommy
 

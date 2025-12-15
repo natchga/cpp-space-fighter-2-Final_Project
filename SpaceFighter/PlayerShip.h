@@ -14,8 +14,8 @@ public:
 	/*PlayerShip(AircraftType type = AircraftType::DefaultFighter)
 		: m_type(type){ }*/
 
-	PlayerShip(AircraftType type);
-
+	//PlayerShip(AircraftType type);
+	PlayerShip(AircraftType type, std::vector<Projectile*>* pProjectilePool);
 	virtual ~PlayerShip() { }
 
 
@@ -90,5 +90,6 @@ private:
 
 	//Added by @Emilien
 	AircraftType m_type; // Store which aircraf selection
+	std::vector<Projectile*>* m_pProjectilePool; // store pointer to vector<Projectile*>
 
 };

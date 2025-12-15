@@ -25,40 +25,13 @@ GameplayScreen::GameplayScreen(AircraftType aircraftType)
     Show();
 }
 
+
+
 void GameplayScreen::LoadContent(ResourceManager& resourceManager)
 {
     m_pResourceManager = &resourceManager;
-
-    // Ensure a level exists first
-    if (!m_pLevel)
-        LoadLevel(m_levelIndex);
-
-    // Always create a player ship
-    PlayerShip* pPlayer = new PlayerShip(m_aircraftType);
-    // Attach Blaster so GetWeapon("Main Blaster") is never nullptr
-    Blaster* pBlaster = new Blaster("Main Blaster");
-
-    // If you later add projectile pool in Level, uncomment this
-    pBlaster->SetProjectilePool(&m_pLevel->GetProjectiles());
-    pPlayer->AttachItem(pBlaster, Vector2::UNIT_Y * -20);
-
-
-    // Load textures, sounds, etc.
-    pPlayer->LoadContent(resourceManager);
-    pPlayer->Activate();
-
-    m_pLevel->SetPlayerShip(pPlayer); //Give player to the level
-
-
-
-
-    // Add PlayerShip to level
-    m_pLevel->AddGameObject(pPlayer);
-
-
+    LoadLevel(m_levelIndex);
 }
-
-
 
 void GameplayScreen::LoadLevel(const int levelIndex)
 {

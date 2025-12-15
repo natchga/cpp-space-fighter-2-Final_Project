@@ -94,6 +94,9 @@ protected:
 		@return Returns the max hit points of the ship. */
 	virtual float GetMaxHitPoints() const { return m_maxHitPoints; }
 
+	std::map<std::string, IAttachment*> m_attachments;
+	std::map<std::string, IAttachment*>::iterator m_attachmentIt;
+
 
 private:
 
@@ -104,7 +107,7 @@ private:
 
 	bool m_isInvulnurable = false;
 
-	std::map<std::string, IAttachment *> m_attachments;
-	std::map<std::string, IAttachment*>::iterator m_attachmentIt;
+;
+
 };
 

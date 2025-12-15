@@ -1,8 +1,44 @@
-
+﻿
 #include "Level.h"
 #include "EnemyShip.h"
 #include "Blaster.h"
+#include "SingleShot.h"
+#include "SpreadShot.h"
+#include "Projectile.h"
 #include "GameplayScreen.h"
+
+
+std::vector<Weapon*> Level::CreateWeaponsForAircraft(AircraftType type)
+{
+	std::vector<Weapon*> weapons;
+
+	switch (type)
+	{
+	case AircraftType::DefaultFighter:
+		weapons.push_back(new SingleShot("Main Blaster"));
+		break;
+
+	case AircraftType::LightFighter:
+		weapons.push_back(new SingleShot("Single Shot"));
+		break;
+
+	case AircraftType::HeavyBomber:
+		weapons.push_back(new SpreadShot("Spread Shot", 5, 45.0f));
+		break;
+
+	default:
+		break;
+	}
+
+	// Assign the projectile pool to each weapon
+	for (Weapon* weapon : weapons)
+		weapon->SetProjectilePool(&m_projectiles);
+
+	return weapons;
+}
+
+
+
 
 std::vector<Explosion *> Level::s_explosions;
 
@@ -52,15 +88,35 @@ Level::Level(AircraftType type) : m_aircraftType(type)
 	pBlaster->SetProjectilePool(&m_projectiles);
 	m_pPlayerShip->AttachItem(pBlaster, Vector2::UNIT_Y * -20);*/
 
+	// Fill projectile pool
 	for (int i = 0; i < 100; i++)
 	{
-		Projectile *pProjectile = new Projectile();
+		Projectile* pProjectile = new Projectile();
 		m_projectiles.push_back(pProjectile);
 		AddGameObject(pProjectile);
 	}
-	
-	//m_pPlayerShip->Activate();
-	//AddGameObject(m_pPlayerShip);
+
+	// Create player ship and pass projectile pool
+	m_pPlayerShip = new PlayerShip(type, &m_projectiles);
+	AddGameObject(m_pPlayerShip);
+
+
+	// Create weapons based on the aircraft type
+	std::vector<Weapon*> weapons = CreateWeaponsForAircraft(m_aircraftType);
+	for (Weapon* weapon : weapons)
+	{
+		Vector2 offset = Vector2::ZERO;
+		if (type == AircraftType::DefaultFighter)
+			offset = (weapon->GetKey().find("Spread") != std::string::npos) ? Vector2(10, -20) : Vector2(0, -20);
+		else if (type == AircraftType::HeavyBomber)
+			offset = Vector2(0, -25);
+
+		m_pPlayerShip->AttachItem(weapon, offset); // attach the weapon
+	}
+
+
+	m_pPlayerShip->Activate();
+	AddGameObject(m_pPlayerShip);
 
 	// Setup collision types
 	CollisionManager *pC = GetCollisionManager();
@@ -273,7 +329,7 @@ void Level::Draw(SpriteBatch& spriteBatch)
 
 bool Level::IsComplete() const
 {
-	// Don�t allow victory until at least one enemy has actually become active
+	// Don’t allow victory until at least one enemy has actually become active
 	if (!m_hasHadActiveEnemy)
 		return false;
 
@@ -285,5 +341,7 @@ bool Level::IsComplete() const
 
 	return true;
 }
+
+
 
 

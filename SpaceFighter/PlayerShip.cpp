@@ -4,21 +4,36 @@
 #include "AircraftType.h"
 #include "Projectile.h"
 #include "Blaster.h"
+#include "SingleShot.h"
+#include "SpreadShot.h"
 
 
-
+Texture* Projectile::s_pTexture = nullptr;
 
 // User Stored selection
-PlayerShip::PlayerShip(AircraftType type): m_type(type) 
+PlayerShip::PlayerShip(AircraftType type, std::vector<Projectile*>* pProjectilePool)
+	: m_type(type), m_pProjectilePool(pProjectilePool)
 {
-	// Attach Main Blaster if not already present
-	if (!GetWeapon("Main Blaster"))
+	// Assign default weapon based on type
+	switch (m_type)
 	{
-		Blaster* pBlaster = new Blaster("Main Blaster");
-		AttachItem(pBlaster, Vector2::UNIT_Y * -20);
+	case AircraftType::DefaultFighter:
+	case AircraftType::LightFighter:
+	{
+		Weapon* pWeapon = new SingleShot("Main Blaster");
+		pWeapon->SetProjectilePool(m_pProjectilePool); // pool of Projectile*
+		AttachItem(pWeapon, Vector2(0, -20));
+		break;
+	}
+	case AircraftType::HeavyBomber:
+	{
+		Weapon* pWeapon = new SpreadShot("Spread Shot", 5, 45.0f);
+		pWeapon->SetProjectilePool(m_pProjectilePool);
+		AttachItem(pWeapon, Vector2(0, -25));
+		break;
+	}
 	}
 }
-
 
 
 void PlayerShip::LoadContent(ResourceManager& resourceManager)
@@ -26,38 +41,57 @@ void PlayerShip::LoadContent(ResourceManager& resourceManager)
 	ConfineToScreen();
 	SetResponsiveness(0.1f);
 
+	// Load ship texture
 	switch (m_type)
 	{
 	case AircraftType::LightFighter:
-		std::cout << "m_type value: " << static_cast<int>(m_type) << std::endl;
-
 		m_pTexture = resourceManager.Load<Texture>("Textures\\LightFighterShip.png");
-		SetSpeed(450);
+		SetSpeed(300);
 		break;
 
 	case AircraftType::HeavyBomber:
 		m_pTexture = resourceManager.Load<Texture>("Textures\\HeavyBomberShip.png");
-		SetSpeed(250);
+		SetSpeed(25);
 		break;
 
 	case AircraftType::DefaultFighter:
 	default:
 		m_pTexture = resourceManager.Load<Texture>("Textures\\PlayerShip.png");
 		SetSpeed(250);
-
-		Weapon* pWeapon = GetWeapon("Main Blaster");
-		if (pWeapon)
-		{
-			AudioSample* pAudio = resourceManager.Load<AudioSample>("Audio\\Effects\\Laser.wav");
-			pAudio->SetVolume(0.5f);
-			pWeapon->SetFireSound(pAudio);
-		}
 		break;
 	}
 
+	// Assign bullet textures and sounds to all weapons
+	for (auto& pair : m_attachments)
+	{
+		IAttachment* attachment = pair.second;
+		if (attachment->GetAttachmentType() != "Weapon") continue;
+
+		Weapon* weapon = static_cast<Weapon*>(attachment);
+		Texture* bulletTexture = nullptr;
+
+		// Keep your original paths
+		if (weapon->GetKey() == "Main Blaster")
+			bulletTexture = resourceManager.Load<Texture>("Textures\\Weapons\\SpreadShot.png");
+		else if (weapon->GetKey() == "Spread Shot")
+			bulletTexture = resourceManager.Load<Texture>("Textures\\Weapons\\bulletttt.png");
+		else bulletTexture = resourceManager.Load<Texture>("Textures\\Bullet.png"); 
+
+		// Assign texture to all projectiles in the pool
+		for (Projectile* pProj : *m_pProjectilePool)
+			pProj->SetTexture(bulletTexture);
+
+		weapon->SetProjectileTexture(bulletTexture);
+
+		// Assign fire sound
+		AudioSample* pAudio = resourceManager.Load<AudioSample>("Audio\\Effects\\Laser.wav");
+		pAudio->SetVolume(0.5f);
+		weapon->SetFireSound(pAudio);
+	}
+
+	// Set starting position
 	SetPosition(Game::GetScreenCenter() + Vector2::UNIT_Y * 300);
 }
-
 
 
 //void PlayerShip::LoadContent(ResourceManager& resourceManager)
@@ -169,6 +203,7 @@ void PlayerShip::Update(const GameTime& gameTime)
 	Ship::Update(gameTime);
 }
 
+
 void PlayerShip::Draw(SpriteBatch& spriteBatch)
 {
 	if (IsActive())
@@ -177,7 +212,6 @@ void PlayerShip::Draw(SpriteBatch& spriteBatch)
 		spriteBatch.Draw(m_pTexture, GetPosition(), Color::WHITE * alpha, m_pTexture->GetCenter());
 	}
 }
-
 
 Vector2 PlayerShip::GetHalfDimensions() const
 {

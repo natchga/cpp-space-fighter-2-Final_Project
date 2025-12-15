@@ -1,7 +1,8 @@
 
 #include "Blaster.h"
+#include "Projectile.h"
 
-void Blaster::Update(const GameTime & gameTime)
+void Blaster::Update(const GameTime& gameTime)
 {
 	if (m_cooldown > 0) m_cooldown -= gameTime.GetElapsedTime();
 }

@@ -107,9 +107,6 @@
     <ClCompile Include="SelectAircraftScreen.cpp">
       <Filter>Source Files\Screens</Filter>
     </ClCompile>
-    <ClCompile Include="AircraftType.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="GameOver.cpp">
       <Filter>Source Files\Screens</Filter>
     </ClCompile>
@@ -118,6 +115,12 @@
     </ClCompile>
     <ClCompile Include="Score.cpp">
       <Filter>Source Files\Score</Filter>
+    </ClCompile>
+    <ClCompile Include="SingleShot.cpp">
+      <Filter>Source Files\Game Objects\Ships</Filter>
+    </ClCompile>
+    <ClCompile Include="SpreadShot.cpp">
+      <Filter>Source Files\Game Objects\Ships</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -189,6 +192,12 @@
     </ClInclude>
     <ClInclude Include="Score.h">
       <Filter>Source Files\Score</Filter>
+    </ClInclude>
+    <ClInclude Include="SingleShot.h">
+      <Filter>Source Files\Game Objects\Ships</Filter>
+    </ClInclude>
+    <ClInclude Include="SpreadShot.h">
+      <Filter>Source Files\Game Objects\Ships</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
