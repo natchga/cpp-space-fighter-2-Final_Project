@@ -61,6 +61,14 @@ public:
 		@param isConfined True to confine the player ship to the screen, false otherwise. */
 	virtual void ConfineToScreen(const bool isConfined = true) { m_isConfinedToScreen = isConfined; }
 
+	//==================Added by @Emilien========================
+	virtual void ActivateStealth();
+	virtual void DeactivateStealth();
+	virtual void CheckEnemyCollisions();  // Implement a custom collision override for stealth
+	virtual void IncrementKillCount();// Count the enemies killed
+	void PlayerShootsEnemy(Level* pLevel, GameObject* pObject1, GameObject* pObject2);
+	virtual bool IsStealthActive() const { return m_isStealthActive; }
+	virtual void UpdateStealth(float deltaTime);
 
 protected:
 
@@ -76,7 +84,6 @@ protected:
 		@return Returns the desired direction of the player ship. */
 	virtual Vector2 GetDesiredDirection() const { return m_desiredDirection; }
 
-
 private:
 
 	Vector2 m_desiredDirection;
@@ -88,8 +95,17 @@ private:
 
 	Texture* m_pTexture = nullptr;
 
-	//Added by @Emilien
+	//==================Added by @Emilien========================
+
 	AircraftType m_type; // Store which aircraf selection
 	std::vector<Projectile*>* m_pProjectilePool; // store pointer to vector<Projectile*>
+	/* Stealth Mode*/
+	bool m_isStealthActive = false;       
+	float m_stealthDuration = 0.0f;      
+	float m_maxStealthDuration = 0.0f;   // Maximum stealth duration based on aircraft type
+	int m_killsSinceLastStealth = 0; // Tracks kills since last stealth activation
+	int m_killsToActivateStealth = 3; // Activate stealth every 2 kills
+	AudioSample* m_pStealthSound = nullptr;
+	float GetStealthUnlockRatio() const;
 
 };

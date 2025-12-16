@@ -34,15 +34,8 @@ public:
 	virtual void Activate(const Vector2& position, bool wasShotByPlayer = true);
 
 	//===============Added by @Emilien ===============
-	// 
-	//**New overload** for weapons that pass velocity and friendly flag
-	void Activate(const Vector2& position, bool isFriendly, const Vector2& velocity);
 
-	//===============End==============================
 
-	//===============Added by @Emilien ===============
-	 
-	
 	//**New overload** for weapons that pass velocity and friendly flag
 	void Activate(const Vector2& position, bool isFriendly, const Vector2& velocity);
 

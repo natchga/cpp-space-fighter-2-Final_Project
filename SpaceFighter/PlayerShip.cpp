@@ -1,18 +1,17 @@
-
-#include "PlayerShip.h"
+﻿#include "PlayerShip.h"
 #include "Level.h"
 #include "AircraftType.h"
 #include "Projectile.h"
-#include "Blaster.h"
 #include "SingleShot.h"
 #include "SpreadShot.h"
-
+#include "EnemyShip.h" // @Emilien: I needed the EnemyShip.h to crack the 
 
 Texture* Projectile::s_pTexture = nullptr;
 
 // User Stored selection
 PlayerShip::PlayerShip(AircraftType type, std::vector<Projectile*>* pProjectilePool)
-	: m_type(type), m_pProjectilePool(pProjectilePool)
+	: m_type(type)
+	, m_pProjectilePool(pProjectilePool)
 {
 	// Assign default weapon based on type
 	switch (m_type)
@@ -21,7 +20,7 @@ PlayerShip::PlayerShip(AircraftType type, std::vector<Projectile*>* pProjectileP
 	case AircraftType::LightFighter:
 	{
 		Weapon* pWeapon = new SingleShot("Main Blaster");
-		pWeapon->SetProjectilePool(m_pProjectilePool); // pool of Projectile*
+		pWeapon->SetProjectilePool(m_pProjectilePool);
 		AttachItem(pWeapon, Vector2(0, -20));
 		break;
 	}
@@ -36,27 +35,32 @@ PlayerShip::PlayerShip(AircraftType type, std::vector<Projectile*>* pProjectileP
 }
 
 
+
 void PlayerShip::LoadContent(ResourceManager& resourceManager)
 {
 	ConfineToScreen();
 	SetResponsiveness(0.1f);
+
 
 	// Load ship texture
 	switch (m_type)
 	{
 	case AircraftType::LightFighter:
 		m_pTexture = resourceManager.Load<Texture>("Textures\\LightFighterShip.png");
+		m_maxStealthDuration = 15.0f; // Short duration
 		SetSpeed(300);
 		break;
 
 	case AircraftType::HeavyBomber:
 		m_pTexture = resourceManager.Load<Texture>("Textures\\HeavyBomberShip.png");
+		m_maxStealthDuration = 20.0f; // Longer duration
 		SetSpeed(25);
 		break;
 
 	case AircraftType::DefaultFighter:
 	default:
 		m_pTexture = resourceManager.Load<Texture>("Textures\\PlayerShip.png");
+		m_maxStealthDuration = 10.0f; // Longer duration
 		SetSpeed(250);
 		break;
 	}
@@ -75,7 +79,7 @@ void PlayerShip::LoadContent(ResourceManager& resourceManager)
 			bulletTexture = resourceManager.Load<Texture>("Textures\\Weapons\\SpreadShot.png");
 		else if (weapon->GetKey() == "Spread Shot")
 			bulletTexture = resourceManager.Load<Texture>("Textures\\Weapons\\bulletttt.png");
-		else bulletTexture = resourceManager.Load<Texture>("Textures\\Bullet.png"); 
+		else bulletTexture = resourceManager.Load<Texture>("Textures\\Bullet.png");
 
 		// Assign texture to all projectiles in the pool
 		for (Projectile* pProj : *m_pProjectilePool)
@@ -89,25 +93,17 @@ void PlayerShip::LoadContent(ResourceManager& resourceManager)
 		weapon->SetFireSound(pAudio);
 	}
 
+	m_pStealthSound = resourceManager.Load<AudioSample>(
+		"Audio\\Effects\\stealthMode.MP3"
+	);
+	m_pStealthSound->SetVolume(0.6f);
+
+
 	// Set starting position
 	SetPosition(Game::GetScreenCenter() + Vector2::UNIT_Y * 300);
 }
 
 
-//void PlayerShip::LoadContent(ResourceManager& resourceManager)
-//{
-//	ConfineToScreen();
-//	SetResponsiveness(0.1);
-//
-//	m_pTexture = resourceManager.Load<Texture>("Textures\\PlayerShip.png");
-//
-//	AudioSample* pAudio = resourceManager.Load<AudioSample>("Audio\\Effects\\Laser.wav");
-//	pAudio->SetVolume(0.5f);
-//	GetWeapon("Main Blaster")->SetFireSound(pAudio);
-//
-//	SetPosition(Game::GetScreenCenter() + Vector2::UNIT_Y * 300);
-//
-//}
 
 
 void PlayerShip::Initialize(Level* pLevel, Vector2& startPosition)
@@ -117,6 +113,7 @@ void PlayerShip::Initialize(Level* pLevel, Vector2& startPosition)
 
 void PlayerShip::HandleInput(const InputState& input)
 {
+
 	if (IsActive())
 	{
 		Vector2 direction;
@@ -155,11 +152,39 @@ void PlayerShip::HandleInput(const InputState& input)
 		SetDesiredDirection(direction);
 		if (type != TriggerType::None) FireWeapons(type);
 	}
+	//Check Input for Stealth Activation @By Emilien
+	// --- Stealth input only ---
+	if (input.IsKeyDown(Key::S) && !m_isStealthActive)
+	{
+		/*if (m_killsSinceLastStealth >= m_killsToActivateStealth)
+		{*/
+			ActivateStealth();
+			m_killsSinceLastStealth = 0;
+
+			std::cout << "STEALTH ACTIVATED!\n";
+	/*	}
+		else
+		{
+			std::cout << "Not enough kills ("
+				<< m_killsSinceLastStealth << "/"
+				<< m_killsToActivateStealth << ")\n";
+		}*/
+	}
+
+
+
+
+
 }
+
 
 
 void PlayerShip::Update(const GameTime& gameTime)
 {
+
+	float deltaTime = gameTime.GetElapsedTime(); //------@Emilien
+
+
 	// Get the velocity for the direction that the player is trying to go.
 	Vector2 targetVelocity = m_desiredDirection * GetSpeed() * gameTime.GetElapsedTime();
 	// We can't go from 0-100 mph instantly! This line interpolates the velocity for us.
@@ -181,7 +206,7 @@ void PlayerShip::Update(const GameTime& gameTime)
 			// move the ship to the left edge of the screen (keep Y the same)
 			SetPosition(Left + GetHalfDimensions().X, pPosition->Y);
 			m_velocity.X = 0; // remove any velocity that could potentially
-							  // keep the ship pinned against the edge
+			// keep the ship pinned against the edge
 		}
 		if (pPosition->X + GetHalfDimensions().X > Right) // right edge?
 		{
@@ -201,17 +226,33 @@ void PlayerShip::Update(const GameTime& gameTime)
 	}
 
 	Ship::Update(gameTime);
+
+	UpdateStealth(deltaTime);//------@Emilien:  Update stealth 
+
 }
 
 
+//Set the Aircraft tranparancy when the stealth mode is activated
 void PlayerShip::Draw(SpriteBatch& spriteBatch)
 {
-	if (IsActive())
-	{
-		const float alpha = GetCurrentLevel()->GetAlpha();
-		spriteBatch.Draw(m_pTexture, GetPosition(), Color::WHITE * alpha, m_pTexture->GetCenter());
-	}
+	if (!IsActive())
+		return;
+
+	float alpha = 1.0f;
+
+	if (m_isStealthActive)
+		alpha = 0.5f; // 50% transparent
+
+	spriteBatch.Draw(
+		m_pTexture,
+		GetPosition(),
+		Color::WHITE * alpha,
+		m_pTexture->GetCenter()
+	);
 }
+
+
+
 
 Vector2 PlayerShip::GetHalfDimensions() const
 {
@@ -222,3 +263,90 @@ void PlayerShip::SetResponsiveness(const float responsiveness)
 {
 	m_responsiveness = Math::Clamp(0, 1, responsiveness);
 }
+
+//==================Added by @Emilien========================
+/*Activate  and Activate the Stealth*/
+void PlayerShip::ActivateStealth()
+{
+	if (m_isStealthActive) return;
+
+	m_isStealthActive = true;
+	m_stealthDuration = m_maxStealthDuration;
+
+	if (m_pStealthSound)
+		m_pStealthSound->Play();
+}
+
+/*Activate  and Deactivate the Stealth*/
+void PlayerShip::DeactivateStealth()
+{
+	m_isStealthActive = false;
+}
+
+void PlayerShootsEnemy(Level* pLevel, GameObject* pObject1, GameObject* pObject2)
+{
+
+	bool isEnemyFirst = pObject1->HasMask(CollisionType::Enemy);
+	EnemyShip* pEnemyShip = dynamic_cast<EnemyShip*>(isEnemyFirst ? pObject1 : pObject2);
+	Projectile* pProjectile = dynamic_cast<Projectile*>(!isEnemyFirst ? pObject1 : pObject2);
+
+	if (!pEnemyShip || !pProjectile) return;
+
+	pEnemyShip->Hit(pProjectile->GetDamage());
+	pProjectile->Deactivate();
+
+	// If the enemy died, increment the player's kill count
+	if (!pEnemyShip->IsActive())
+	{
+		PlayerShip* pPlayer = pLevel->GetPlayerShip();
+		if (pPlayer)
+		{
+			pPlayer->IncrementKillCount(); // increment properly
+		}
+	}
+}
+
+// Prevent enemy collisions while in stealth
+void PlayerShip::CheckEnemyCollisions()
+{
+	// Intentionally empty for now **
+	// Stealth makes the player ignore enemy collisions
+}
+
+
+void PlayerShip::UpdateStealth(float deltaTime)
+{
+	if (m_isStealthActive)
+	{
+		m_stealthDuration -= deltaTime;
+		if (m_stealthDuration <= 0.0f)
+		{
+			DeactivateStealth();
+		}
+		CheckEnemyCollisions();
+	}
+}
+
+
+
+// track kills since last stealth
+void PlayerShip::IncrementKillCount()
+{
+	m_killsSinceLastStealth++;
+
+	std::cout << "Enemies Destroyed: "
+		<< m_killsSinceLastStealth << "/"
+		<< m_killsToActivateStealth << std::endl;
+}
+
+
+
+
+
+
+
+
+
+
+
+

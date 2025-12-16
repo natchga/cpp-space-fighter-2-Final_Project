@@ -17,31 +17,22 @@ class Level
 public:
 	//-----------------------------------------------------
 	// Added by @Emilien
-	   std::vector<Weapon*> CreateWeaponsForAircraft(AircraftType type);
-
-	bool HasHadActiveEnemy() const { return m_hasHadActiveEnemy; } // Getter/setter to see if enemies have been active -- tommy
-
-	void SetHasHadActiveEnemy(bool value) { m_hasHadActiveEnemy = value; }
-	
-
-	virtual bool IsComplete() const; // checks to see if game is complete - tommy
-
-	//-----------------------------------------------------
-	// Added by @Emilien
 
 	/** @brief Instantiate a level object. */
 	Level(AircraftType type);
 	virtual ~Level();
 
-	/** Player ship management */
-	virtual void SetPlayerShip(PlayerShip* pPlayerShip) { m_pPlayerShip = pPlayerShip; }
+	   std::vector<Weapon*> CreateWeaponsForAircraft(AircraftType type);
+
+	bool HasHadActiveEnemy() const { return m_hasHadActiveEnemy; } // Getter/setter to see if enemies have been active -- tommy
+
+	void SetHasHadActiveEnemy(bool value) { m_hasHadActiveEnemy = value; }
 	PlayerShip* GetPlayerShip() const { return m_pPlayerShip; }
+	
 
-	/** Projectile pool access */
-	std::vector<Projectile*>& GetProjectiles() { return m_projectiles; }
-
-
-	//End-----------------------------------------------
+	std::vector<Projectile*>& GetProjectiles() { return m_projectiles; } /** Projectile pool access */
+	virtual void SetPlayerShip(PlayerShip* pPlayerShip) { m_pPlayerShip = pPlayerShip; }/** Player ship management */
+	virtual bool IsComplete() const; // checks to see if game is complete - tommy
 
 
 	/** @brief Load the content for the level, including game objects and resources.

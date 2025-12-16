@@ -61,6 +61,13 @@ void PlayerCollidesWithEnemy(GameObject *pObject1, GameObject *pObject2)
 	bool m = pObject1->HasMask(CollisionType::Player);
 	PlayerShip *pPlayerShip = (PlayerShip *)((m) ? pObject1 : pObject2);
 	EnemyShip *pEnemyShip = (EnemyShip *)((!m) ? pObject1 : pObject2);
+
+	//========Added by @Emilien ==========
+	if (pPlayerShip->IsStealthActive())
+	{
+		return; // Ignore collision completely
+	}
+
 	pPlayerShip->Hit(std::numeric_limits<float>::max());
 	pEnemyShip->Hit(std::numeric_limits<float>::max());
 }
@@ -128,6 +135,8 @@ Level::Level(AircraftType type) : m_aircraftType(type)
 	pC->AddNonCollisionType(playerShip, playerProjectile);
 	pC->AddCollisionType(playerProjectile, enemyShip, PlayerShootsEnemy);
 	pC->AddCollisionType(playerShip, enemyShip, PlayerCollidesWithEnemy);
+
+
 }
 
 Level::~Level()
