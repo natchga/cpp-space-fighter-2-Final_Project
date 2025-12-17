@@ -5,6 +5,7 @@
 #include "PlayerShip.h"
 #include "CollisionManager.h"
 #include "Explosion.h"
+#include "Score.h"
 
 using namespace KatanaEngine;
 
@@ -24,16 +25,20 @@ public:
 
 	   std::vector<Weapon*> CreateWeaponsForAircraft(AircraftType type);
 
-	bool HasHadActiveEnemy() const { return m_hasHadActiveEnemy; } // Getter/setter to see if enemies have been active -- tommy
-
-	void SetHasHadActiveEnemy(bool value) { m_hasHadActiveEnemy = value; }
 	PlayerShip* GetPlayerShip() const { return m_pPlayerShip; }
-	
+
+	void SetTotalEnemiesToSpawn(int total) { m_totalEnemiesToSpawn = total; } // keeps track of how mawny enemies are suppose to spawn in a level - tommy
+	int  GetTotalEnemiesToSpawn() const { return m_totalEnemiesToSpawn; }
+
+	void AddEnemySpawned() { m_enemiesSpawned++; }
+	int  GetEnemiesSpawned() const { return m_enemiesSpawned; }
+
+
 
 	std::vector<Projectile*>& GetProjectiles() { return m_projectiles; } /** Projectile pool access */
 	virtual void SetPlayerShip(PlayerShip* pPlayerShip) { m_pPlayerShip = pPlayerShip; }/** Player ship management */
-	virtual bool IsComplete() const; // checks to see if game is complete - tommy
-
+	
+	virtual bool IsComplete() const;
 
 	/** @brief Load the content for the level, including game objects and resources.
 		@param resourceManager A reference to the game's resource manager,
@@ -148,9 +153,8 @@ protected:
 
 private:
 
-	bool m_hasSpawnedEnemies = false; // set enemy spawn to false - tommy
-	
-	bool m_hasHadActiveEnemy = false; // tracks to see if enemies have moved - tommy
+	int m_totalEnemiesToSpawn = 0; // for keeping track of the total number of enemies that have psawned - tommy
+	int m_enemiesSpawned = 0;
 
 	static std::vector<Explosion *> s_explosions;
 	//std::vector<Explosion *>::iterator m_explosionIt;

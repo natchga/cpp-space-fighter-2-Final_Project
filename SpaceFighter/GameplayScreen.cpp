@@ -54,40 +54,27 @@ void GameplayScreen::HandleInput(const InputState& input)
 void GameplayScreen::Update(const GameTime& gameTime) // updated the update to see if the game is over or a victory -- tommy
 {
 
+    // update level first
     m_pLevel->Update(gameTime);
 
-    if (m_gameEnded)
-        return;
-
-    PlayerShip* pPlayer = m_pLevel->GetPlayerShip();
-
-    // gives us a gameover screen oncce done.
-    if (pPlayer && !pPlayer->IsActive())
+    // Game Over first
+    if (!m_gameEnded && !m_pLevel->GetPlayerShip()->IsActive())
     {
         m_gameEnded = true;
-
-        SetOnRemove([this]()
-            {
-                AddScreen(new GameOverScreen());
-            });
-
+        SetOnRemove([this]() { AddScreen(new GameOverScreen()); });
         Exit();
         return;
     }
 
-    // gives us a victory screen once done.
-    if (m_pLevel->IsComplete())
+    // Victory second
+    if (!m_gameEnded && m_pLevel->IsComplete())
     {
         m_gameEnded = true;
-
-        SetOnRemove([this]()
-            {
-                AddScreen(new VictoryScreen());
-            });
-
+        SetOnRemove([this]() { AddScreen(new VictoryScreen()); });
         Exit();
         return;
     }
+
 }
 
 
