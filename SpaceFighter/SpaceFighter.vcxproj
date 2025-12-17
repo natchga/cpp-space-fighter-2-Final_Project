@@ -175,6 +175,8 @@
     <ClCompile Include="CollisionManager.cpp" />
     <ClCompile Include="CollisionType.cpp" />
     <ClCompile Include="EnemyShip.cpp" />
+    <ClCompile Include="EnemyShipLarge.cpp" />
+    <ClCompile Include="EnemyShipMedium.cpp" />
     <ClCompile Include="Explosion.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="GameOver.cpp" />
@@ -208,6 +210,8 @@
     <ClInclude Include="CollisionManager.h" />
     <ClInclude Include="CollisionType.h" />
     <ClInclude Include="EnemyShip.h" />
+    <ClInclude Include="EnemyShipLarge.h" />
+    <ClInclude Include="EnemyShipMedium.h" />
     <ClInclude Include="Explosion.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="GameOver.h" />

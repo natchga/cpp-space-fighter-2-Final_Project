@@ -122,6 +122,12 @@
     <ClCompile Include="SpreadShot.cpp">
       <Filter>Source Files\Game Objects\Ships</Filter>
     </ClCompile>
+    <ClCompile Include="EnemyShipMedium.cpp">
+      <Filter>Source Files\Game Objects\Ships</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyShipLarge.cpp">
+      <Filter>Source Files\Game Objects\Ships</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MainMenuScreen.h">
@@ -197,6 +203,12 @@
       <Filter>Source Files\Game Objects\Ships</Filter>
     </ClInclude>
     <ClInclude Include="SpreadShot.h">
+      <Filter>Source Files\Game Objects\Ships</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyShipMedium.h">
+      <Filter>Source Files\Game Objects\Ships</Filter>
+    </ClInclude>
+    <ClInclude Include="EnemyShipLarge.h">
       <Filter>Source Files\Game Objects\Ships</Filter>
     </ClInclude>
   </ItemGroup>

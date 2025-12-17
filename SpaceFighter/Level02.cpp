@@ -1,51 +1,73 @@
-
-
-#include "Level02.h"
+﻿#include "Level02.h"
 #include "BioEnemyShip.h"
-
+#include "EnemyShipMedium.h"
+#include "EnemyShipLarge.h"
 
 Level02::Level02(AircraftType type) : Level(type) {}
 
 void Level02::LoadContent(ResourceManager& resourceManager)
 {
-	// Setup enemy ships
-	Texture* pTexture = resourceManager.Load<Texture>("Textures\\BioEnemyShip.png");
+    m_bossAlive = true;
 
-	const int COUNT = 22;
+    // small bio enemies
+    Texture* pTexture =
+        resourceManager.Load<Texture>("Textures\\BioEnemyShip.png");
 
-	double xPositions[COUNT] =
-	{
-		0.25, 0.2, 0.3,
-		0.75, 0.8, 0.7,
-		0.3, 0.25, 0.35, 0.2, 0.4,
-		0.7, 0.75, 0.65, 0.8, 0.6,
-		0.5, 0.4, 0.6, 0.45, 0.55, .6
-	};
+    const int COUNT = 22;
+    float delay = 3.0f;
+    Vector2 position;
 
-	double delays[COUNT] =
-	{
-		0.0, 0.25, 0.25,
-		3.0, 0.25, 0.25,
-		3.25, 0.25, 0.25, 0.25, 0.25,
-		3.25, 0.25, 0.25, 0.25, 0.25,
-		3.5, 0.3, 0.3, 0.3, 0.3, 0.3
-	};
+    for (int i = 0; i < COUNT; i++)
+    {
+        delay += 0.25f;
 
-	float delay = 3.0; // start delay
-	Vector2 position;
+        position.Set(
+            0.25f * Game::GetScreenWidth(),
+            -pTexture->GetCenter().Y
+        );
 
-	for (int i = 0; i < COUNT; i++)
-	{
-		delay += delays[i];
-		position.Set(xPositions[i] * Game::GetScreenWidth(), -pTexture->GetCenter().Y);
+        BioEnemyShip* pEnemy = new BioEnemyShip();
+        pEnemy->SetTexture(pTexture);
+        pEnemy->SetCurrentLevel(this);
+        pEnemy->Initialize(position, delay);
+        AddGameObject(pEnemy);
+    }
 
-		BioEnemyShip* pEnemy = new BioEnemyShip();
-		pEnemy->SetTexture(pTexture);
-		pEnemy->SetCurrentLevel(this);
-		pEnemy->Initialize(position, (float)delay);
-		AddGameObject(pEnemy);
-	}
+    // medium enemies
+    Texture* pMediumTex =
+        resourceManager.Load<Texture>("Textures\\EnemyShipMedium.png");
 
-	Level::LoadContent(resourceManager);
+    for (int i = 0; i < 5; i++)
+    {
+        EnemyShipMedium* pMedium = new EnemyShipMedium();
+        pMedium->SetTexture(pMediumTex);
+        pMedium->SetCurrentLevel(this);
+        pMedium->Initialize(
+            Vector2(200 + i * 120, -50),
+            4.0f + i
+        );
+        AddGameObject(pMedium);
+    }
+
+    // boss enemy
+    Texture* pBossTex =
+        resourceManager.Load<Texture>("Textures\\BioEnemyBoss.png");
+
+    EnemyShipLarge* pBoss = new EnemyShipLarge();
+    pBoss->SetTexture(pBossTex);
+    pBoss->SetCurrentLevel(this);
+
+    pBoss->Initialize(
+        Vector2(
+            Game::GetScreenWidth() / 2,
+            pBossTex->GetCenter().Y + 40
+        ),
+        0.0f
+    );
+
+    pBoss->Activate();
+    AddGameObject(pBoss);
+
+    Level::LoadContent(resourceManager);
 }
 

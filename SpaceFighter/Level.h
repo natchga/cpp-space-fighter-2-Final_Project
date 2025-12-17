@@ -15,6 +15,9 @@ class Level
 {
 
 public:
+
+	bool m_bossAlive = false; // flags that boss is not alive, needed to stop level from ending early
+
 	//-----------------------------------------------------
 	// Added by @Emilien
 
@@ -126,6 +129,7 @@ public:
 
 
 protected:
+	
 
 	/** @brief Get a pointer to the collision manager.
 		@return A pointer to the collision manager. */
