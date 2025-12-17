@@ -17,9 +17,8 @@ void Level02::LoadContent(ResourceManager& resourceManager)
     m_hasHadActiveEnemy = false;
     m_bossAlive = true;
 
-    // --------------------------
+
     // Spawn small/bio enemies
-    // --------------------------
     Texture* pBioTex = resourceManager.Load<Texture>("Textures\\BioEnemyShip.png");
     float delay = 0.0f;
     Vector2 position;
@@ -38,10 +37,7 @@ void Level02::LoadContent(ResourceManager& resourceManager)
 
         pEnemy->SetDelaySeconds(delay);
     }
-
-    // --------------------------
     // Spawn medium enemies
-    // --------------------------
     Texture* pMediumTex = resourceManager.Load<Texture>("Textures\\EnemyShipMedium.png");
     for (int i = 0; i < 5; i++)
     {
@@ -54,10 +50,7 @@ void Level02::LoadContent(ResourceManager& resourceManager)
 
         pMedium->SetDelaySeconds(enemyDelay);
     }
-
-    // --------------------------
-    // Spawn boss (large enemy)
-    // --------------------------
+    // spawn boss/large enemy
     Texture* pBossTex = resourceManager.Load<Texture>("Textures\\BioEnemyBoss.png");
     EnemyShipLarge* pBoss = new EnemyShipLarge();
     pBoss->SetTexture(pBossTex);
@@ -66,12 +59,6 @@ void Level02::LoadContent(ResourceManager& resourceManager)
     pBoss->Activate();
     AddGameObject(pBoss);
 
-    // When boss is destroyed, mark m_bossAlive = false
-    pBoss->SetOnDestroy([this]() { m_bossAlive = false; });
-
-    // --------------------------
-    // Set background
-    // --------------------------
     SetBackground(resourceManager.Load<Texture>("Textures\\SpaceBackground02.png"));
 
     std::cout << "[Level02] LoadContent finished.\n";
@@ -83,22 +70,27 @@ void Level02::Update(const GameTime& gameTime)
 {
     Level::Update(gameTime);
 
-    // Count active enemies (including boss)
-    int activeCount = 0;
+    int activeEnemies = 0;
+    bool bossStillAlive = false;
+
     for (GameObject* obj : GetGameObjects())
     {
         if (obj->IsActive() && obj->HasMask(CollisionType::Enemy))
-            activeCount++;
+        {
+            activeEnemies++;
+
+            if (dynamic_cast<EnemyShipLarge*>(obj))
+                bossStillAlive = true;
+        }
     }
 
-    // Track if we ever had any active enemy
-    if (activeCount > 0)
+    m_bossAlive = bossStillAlive;
+
+    if (activeEnemies > 0)
         m_hasHadActiveEnemy = true;
 
-    // Level is considered complete if boss is destroyed and we had active enemies
-    bool levelComplete = !m_bossAlive && m_hasHadActiveEnemy;
-
     // Debug output
-    std::cout << "[Level02] Active enemies: " << activeCount
+    std::cout << "[Level02] Active enemies: " << activeEnemies
         << ", Boss alive: " << m_bossAlive
-        << ", HasH
+        << ", HasHadActiveEnemy: " << m_hasHadActiveEnemy << "\n";
+}
