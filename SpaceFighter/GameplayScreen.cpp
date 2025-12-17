@@ -54,14 +54,12 @@ void GameplayScreen::HandleInput(const InputState& input)
     m_pLevel->HandleInput(input);
 }
 
-void GameplayScreen::Update(const GameTime& gameTime) // updated to handle level transitions and game over/victory conditions -- paul
+void GameplayScreen::Update(const GameTime& gameTime) // forces game to progress to level 2 after level 1 - paul
 {
     if (!m_pLevel) return;
 
-    // update the current level
     m_pLevel->Update(gameTime);
 
-    // check if player died
     if (!m_gameEnded && !m_pLevel->GetPlayerShip()->IsActive())
     {
         m_gameEnded = true;
@@ -70,27 +68,20 @@ void GameplayScreen::Update(const GameTime& gameTime) // updated to handle level
         return;
     }
 
-    // check if level is complete
-    if (m_pLevel->IsComplete() && !m_gameEnded)
+    if (m_levelIndex == 0)
     {
-        // move to the next level
-        m_levelIndex++;
-
-        // number of last level index (update if you add more levels)
-        const int MAX_LEVEL_INDEX = 1;
-
-        // if we've passed the last level, show victory
-        if (m_levelIndex > MAX_LEVEL_INDEX)
-        {
-            m_gameEnded = true;
-            SetOnRemove([this]() { AddScreen(new VictoryScreen()); });
-            Exit();
-            return;
-        }
-
-        // otherwise, load next level using LoadLevel (it will delete previous level)
-        std::cout << "Level complete! Switching to Level " << (m_levelIndex + 1) << "\n";
+        m_levelIndex = 1;
+        std::cout << "Forcing progression to Level02...\n";
         LoadLevel(m_levelIndex);
+        return;
+    }
+
+    if (m_levelIndex == 1 && m_pLevel->IsComplete() && !m_gameEnded)
+    {
+        m_gameEnded = true;
+        SetOnRemove([this]() { AddScreen(new VictoryScreen()); });
+        Exit();
+        return;
     }
 }
 

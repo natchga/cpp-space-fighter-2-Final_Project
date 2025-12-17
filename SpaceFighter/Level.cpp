@@ -139,17 +139,29 @@ Level::Level(AircraftType type) : m_aircraftType(type)
 
 }
 
-Level::~Level()
+Level::~Level() // Fixed GameObjects being deleted twice -- paul
 {
 	delete[] m_pSectors;
 	delete m_pCollisionManager;
-	
-	m_gameObjectIt = m_gameObjects.begin();
-	for (; m_gameObjectIt != m_gameObjects.end(); m_gameObjectIt++)
+
+	for (GameObject* obj : m_gameObjects)
 	{
-		delete (*m_gameObjectIt);
+		if (obj == nullptr) continue;
+
+		if (obj == m_pPlayerShip) continue;
+
+		Projectile* proj = dynamic_cast<Projectile*>(obj);
+		if (proj) continue;
+
+		Explosion* expl = dynamic_cast<Explosion*>(obj);
+		if (expl) continue;
+
+		delete obj;
 	}
+
+	delete m_pPlayerShip;
 }
+
 
 
 void Level::LoadContent(ResourceManager& resourceManager)

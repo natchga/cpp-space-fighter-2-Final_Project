@@ -17,27 +17,24 @@ void Level02::LoadContent(ResourceManager& resourceManager)
     m_hasHadActiveEnemy = false;
     m_bossAlive = true;
 
-
-    // Spawn small/bio enemies
+    // --- Small/Bio Enemies ---
     Texture* pBioTex = resourceManager.Load<Texture>("Textures\\BioEnemyShip.png");
     float delay = 0.0f;
-    Vector2 position;
 
     const int BIO_COUNT = 22;
     for (int i = 0; i < BIO_COUNT; i++)
     {
         delay += 0.25f;
-        position.Set(0.25f * Game::GetScreenWidth(), -pBioTex->GetCenter().Y);
+        Vector2 position(0.25f * Game::GetScreenWidth(), -pBioTex->GetCenter().Y);
 
         BioEnemyShip* pEnemy = new BioEnemyShip();
         pEnemy->SetTexture(pBioTex);
         pEnemy->SetCurrentLevel(this);
         pEnemy->Initialize(position, delay);
         AddGameObject(pEnemy);
-
-        pEnemy->SetDelaySeconds(delay);
     }
-    // Spawn medium enemies
+
+    // --- Medium Enemies ---
     Texture* pMediumTex = resourceManager.Load<Texture>("Textures\\EnemyShipMedium.png");
     for (int i = 0; i < 5; i++)
     {
@@ -47,10 +44,9 @@ void Level02::LoadContent(ResourceManager& resourceManager)
         pMedium->SetCurrentLevel(this);
         pMedium->Initialize(Vector2(200 + i * 120, -50), enemyDelay);
         AddGameObject(pMedium);
-
-        pMedium->SetDelaySeconds(enemyDelay);
     }
-    // spawn boss/large enemy
+
+    // --- Boss / Large Enemy ---
     Texture* pBossTex = resourceManager.Load<Texture>("Textures\\BioEnemyBoss.png");
     EnemyShipLarge* pBoss = new EnemyShipLarge();
     pBoss->SetTexture(pBossTex);
@@ -59,6 +55,7 @@ void Level02::LoadContent(ResourceManager& resourceManager)
     pBoss->Activate();
     AddGameObject(pBoss);
 
+    // --- Background ---
     SetBackground(resourceManager.Load<Texture>("Textures\\SpaceBackground02.png"));
 
     std::cout << "[Level02] LoadContent finished.\n";
@@ -69,28 +66,35 @@ void Level02::LoadContent(ResourceManager& resourceManager)
 void Level02::Update(const GameTime& gameTime)
 {
     Level::Update(gameTime);
+    CheckEnemies();
+}
 
-    int activeEnemies = 0;
-    bool bossStillAlive = false;
+void Level02::CheckEnemies()
+{
+    bool hasActiveEnemy = false;
+    bool bossAlive = false;
 
     for (GameObject* obj : GetGameObjects())
     {
-        if (obj->IsActive() && obj->HasMask(CollisionType::Enemy))
-        {
-            activeEnemies++;
+        if (!obj->IsActive()) continue;
 
-            if (dynamic_cast<EnemyShipLarge*>(obj))
-                bossStillAlive = true;
+        if (obj->HasMask(CollisionType::Enemy))
+        {
+            hasActiveEnemy = true;
+        }
+
+        if (dynamic_cast<EnemyShipLarge*>(obj) && obj->IsActive())
+        {
+            bossAlive = true;
         }
     }
 
-    m_bossAlive = bossStillAlive;
+    m_hasHadActiveEnemy = m_hasHadActiveEnemy || hasActiveEnemy;
+    m_bossAlive = bossAlive;
+}
 
-    if (activeEnemies > 0)
-        m_hasHadActiveEnemy = true;
-
-    // Debug output
-    std::cout << "[Level02] Active enemies: " << activeEnemies
-        << ", Boss alive: " << m_bossAlive
-        << ", HasHadActiveEnemy: " << m_hasHadActiveEnemy << "\n";
+bool Level02::IsComplete() const
+{
+    // Level is complete only if at least one enemy appeared AND boss is dead
+    return m_hasHadActiveEnemy && !m_bossAlive;
 }

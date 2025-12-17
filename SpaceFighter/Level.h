@@ -16,7 +16,6 @@ class GameplayScreen;
 class Level
 {
 public:
-
     bool m_bossAlive = false; // flags that boss is not alive, needed to stop level from ending early
 
     //-----------------------------------------------------
@@ -30,7 +29,7 @@ public:
 
     PlayerShip* GetPlayerShip() const { return m_pPlayerShip; }
 
-    void SetTotalEnemiesToSpawn(int total) { m_totalEnemiesToSpawn = total; } // keeps track of how many enemies are supposed to spawn in a level - tommy
+    void SetTotalEnemiesToSpawn(int total) { m_totalEnemiesToSpawn = total; } // keeps track of how many enemies are supposed to spawn in a level
     int  GetTotalEnemiesToSpawn() const { return m_totalEnemiesToSpawn; }
 
     void AddEnemySpawned() { m_enemiesSpawned++; }
@@ -129,23 +128,18 @@ public:
     }
 
 protected:
-
     bool m_hasHadActiveEnemy = false;
 
-    /** @brief Get a pointer to the collision manager.
-        @return A pointer to the collision manager. */
+    /** @brief Get a pointer to the collision manager. */
     virtual CollisionManager* GetCollisionManager() { return m_pCollisionManager; }
 
-    /** @brief Get a pointer to the gameplay screen.
-        @return A pointer to the gameplay screen. */
+    /** @brief Get a pointer to the gameplay screen. */
     virtual GameplayScreen* GetGameplayScreen() const { return m_pGameplayScreen; }
 
-    /** @brief Set the background audio for the level.
-        @param pAudio A pointer to the audio sample to play. */
+    /** @brief Set the background audio for the level. */
     virtual void SetBackgroundAudio(AudioSample* pAudio) { m_pAudio = pAudio; }
 
-    /** @brief Get the background audio for the level.
-        @return A pointer to the audio sample to play. */
+    /** @brief Get the background audio for the level. */
     virtual AudioSample* GetBackgroundAudio() { return m_pAudio; }
 
     /** @brief store the selected aircraft type. */
@@ -155,25 +149,19 @@ protected:
     const std::vector<GameObject*>& GetGameObjects() const { return m_gameObjects; }
 
 private:
-
-    int m_totalEnemiesToSpawn = 0; // for keeping track of the total number of enemies that have spawned - tommy
+    int m_totalEnemiesToSpawn = 0;
     int m_enemiesSpawned = 0;
 
     static std::vector<Explosion*> s_explosions;
 
     CollisionManager* m_pCollisionManager = nullptr;
-
     GameplayScreen* m_pGameplayScreen = nullptr;
-
     AudioSample* m_pAudio = nullptr;
-
     Texture* m_pBackground = nullptr;
 
     std::vector<GameObject*>* m_pSectors;
-
     Vector2 m_sectorCount;
     Vector2 m_sectorSize;
-
     unsigned int m_totalSectorCount = 0;
 
     std::vector<GameObject*> m_gameObjects;
@@ -185,10 +173,7 @@ private:
     void CheckCollisions(std::vector<GameObject*>& sector);
 
     virtual Vector2 GetSectorCount() const { return m_sectorCount; }
-
     virtual Vector2 GetSectorSize() const { return m_sectorSize; }
-
     virtual unsigned int GetTotalSectorCount() const { return m_totalSectorCount; }
-
     virtual std::vector<GameObject*>* GetSectors() { return m_pSectors; }
 };
