@@ -14,6 +14,8 @@ void Level01::LoadContent(ResourceManager& resourceManager)
 	Texture* pTexture = resourceManager.Load<Texture>("Textures\\BioEnemyShip.png");
 
 	const int COUNT = 21;
+	SetTotalEnemiesToSpawn(COUNT); // 
+
 
 	double xPositions[COUNT] =
 	{

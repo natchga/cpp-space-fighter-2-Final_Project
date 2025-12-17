@@ -6,7 +6,6 @@
 
 using namespace KatanaEngine;
 
-
 class Level;
 
 /** @brief Represents a game object in the game.

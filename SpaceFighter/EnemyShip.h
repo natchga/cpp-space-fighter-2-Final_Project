@@ -18,6 +18,7 @@ public:
 		used for loading and managing game assets (resources). */
 	virtual void Update(const GameTime& gameTime);
 
+
 	/** @brief Draws the enemy ship.
 		@param spriteBatch A reference to the game's sprite batch, used for rendering. */
 	virtual void Draw(SpriteBatch& spriteBatch) = 0;
@@ -52,6 +53,9 @@ protected:
 
 
 private:
+
+	bool m_countedAsSpawned = false; // only counts an enemy ship once when spawned. - tommy
+
 
 	double m_delaySeconds = 0;
 
