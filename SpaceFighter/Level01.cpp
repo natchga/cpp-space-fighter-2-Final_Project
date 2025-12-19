@@ -1,6 +1,7 @@
 
 #include "Level01.h"
 #include "BioEnemyShip.h"
+#include "EnemyShipMedium.h"
 
 
 
@@ -13,6 +14,8 @@ void Level01::LoadContent(ResourceManager& resourceManager)
 	Texture* pTexture = resourceManager.Load<Texture>("Textures\\BioEnemyShip.png");
 
 	const int COUNT = 21;
+	SetTotalEnemiesToSpawn(COUNT); // 
+
 
 	double xPositions[COUNT] =
 	{
@@ -46,6 +49,24 @@ void Level01::LoadContent(ResourceManager& resourceManager)
 		pEnemy->Initialize(position, (float)delay);
 		AddGameObject(pEnemy);
 
+	}
+
+	// medium enemy new code
+	Texture* pMediumTex =
+		resourceManager.Load<Texture>("Textures\\EnemyShipMedium.png");
+
+	for (int i = 0; i < 4; i++)
+	{
+		Vector2 pos(
+			(0.3f + i * 0.1f) * Game::GetScreenWidth(),
+			-pMediumTex->GetCenter().Y
+		);
+
+		EnemyShipMedium* pMedium = new EnemyShipMedium();
+		pMedium->SetTexture(pMediumTex);
+		pMedium->SetCurrentLevel(this);
+		pMedium->Initialize(pos, 8.0f + i); // this spawns the medium enemys late in the level
+		AddGameObject(pMedium);
 	}
 
 	// Setup background

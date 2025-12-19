@@ -18,6 +18,7 @@ public:
 		used for loading and managing game assets (resources). */
 	virtual void Update(const GameTime& gameTime);
 
+
 	/** @brief Draws the enemy ship.
 		@param spriteBatch A reference to the game's sprite batch, used for rendering. */
 	virtual void Draw(SpriteBatch& spriteBatch) = 0;
@@ -25,14 +26,14 @@ public:
 	/** @brief Initializes the enemy ship.
 		@param position The starting position of the enemy ship.
 		@param delaySeconds The delay before the enemy ship activates. */
-	virtual void Initialize(const Vector2 position, const double delaySeconds);
+	virtual void Initialize(const Vector2 position, double delaySeconds);
 
 	/** @brief Fires a weapon from the enemy ship. */
 	virtual void Fire() { }
 
 	/** @brief Applies damage to the ship.
 		@param damage The amount of damage to apply. */
-	virtual void Hit(const float damage);
+	virtual void Hit(float damage);
 
 	/** @brief Gets the string representation of the enemy ship.
 		@return Returns the string "Enemy Ship". */
@@ -42,20 +43,13 @@ public:
 		@return Returns the collision type of the enemy ship. */
 	virtual CollisionType GetCollisionType() const { return CollisionType::Enemy | CollisionType::Ship; }
 
-
-protected:
-
-	/** @brief Gets the delay before the enemy ship activates,
-		to prevent all enemy ships from activating at the same time.
-		@return Returns the delay before the enemy ship activates. */
-	virtual double GetDelaySeconds() const { return m_delaySeconds; }
+	void SetDelaySeconds(float delay) { m_delaySeconds = delay; }
+	float GetDelaySeconds() const { return m_delaySeconds; }
 
 
-private:
+protected: // moved everything to protected -- paul
 
-	double m_delaySeconds = 0;
-
-	double m_activationSeconds = 0;
-
-
+	double m_delaySeconds = 0.0;
+	double m_activationSeconds = 0.0;
+	bool m_countedAsSpawned = false;
 };

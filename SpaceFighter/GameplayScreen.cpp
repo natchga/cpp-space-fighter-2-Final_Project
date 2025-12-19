@@ -8,7 +8,7 @@
 #include "Projectile.h"     
 #include "GameOver.h"
 #include "Victory.h"
-
+#include "Level02.h"
 
 GameplayScreen::GameplayScreen(AircraftType aircraftType)
     : m_levelIndex(0),
@@ -40,6 +40,9 @@ void GameplayScreen::LoadLevel(const int levelIndex)
     switch (levelIndex)
     {
     case 0: m_pLevel = new Level01(m_aircraftType); break;  // pass the selected aircraft type
+    case 1: m_pLevel = new Level02(m_aircraftType); break;  // add Level02 support
+    default:
+        m_pLevel = new Level01(m_aircraftType); break; // fallback
     }
 
     m_pLevel->SetGameplayScreen(this);
@@ -51,40 +54,32 @@ void GameplayScreen::HandleInput(const InputState& input)
     m_pLevel->HandleInput(input);
 }
 
-void GameplayScreen::Update(const GameTime& gameTime) // updated the update to see if the game is over or a victory -- tommy
+void GameplayScreen::Update(const GameTime& gameTime) // forces game to progress to level 2 after level 1 - paul
 {
+    if (!m_pLevel) return;
 
     m_pLevel->Update(gameTime);
 
-    if (m_gameEnded)
-        return;
-
-    PlayerShip* pPlayer = m_pLevel->GetPlayerShip();
-
-    // gives us a gameover screen oncce done.
-    if (pPlayer && !pPlayer->IsActive())
+    if (!m_gameEnded && !m_pLevel->GetPlayerShip()->IsActive())
     {
         m_gameEnded = true;
-
-        SetOnRemove([this]()
-            {
-                AddScreen(new GameOverScreen());
-            });
-
+        SetOnRemove([this]() { AddScreen(new GameOverScreen()); });
         Exit();
         return;
     }
 
-    // gives us a victory screen once done.
-    if (m_pLevel->IsComplete())
+    if (m_levelIndex == 0)
+    {
+        m_levelIndex = 1;
+        std::cout << "Forcing progression to Level02...\n";
+        LoadLevel(m_levelIndex);
+        return;
+    }
+
+    if (m_levelIndex == 1 && m_pLevel->IsComplete() && !m_gameEnded)
     {
         m_gameEnded = true;
-
-        SetOnRemove([this]()
-            {
-                AddScreen(new VictoryScreen());
-            });
-
+        SetOnRemove([this]() { AddScreen(new VictoryScreen()); });
         Exit();
         return;
     }

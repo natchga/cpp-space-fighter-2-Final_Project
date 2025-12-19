@@ -161,17 +161,29 @@ Level::Level(AircraftType type) : m_aircraftType(type)
 
 }
 
-Level::~Level()
+Level::~Level() // Fixed GameObjects being deleted twice -- paul
 {
 	delete[] m_pSectors;
 	delete m_pCollisionManager;
-	
-	m_gameObjectIt = m_gameObjects.begin();
-	for (; m_gameObjectIt != m_gameObjects.end(); m_gameObjectIt++)
+
+	for (GameObject* obj : m_gameObjects)
 	{
-		delete (*m_gameObjectIt);
+		if (obj == nullptr) continue;
+
+		if (obj == m_pPlayerShip) continue;
+
+		Projectile* proj = dynamic_cast<Projectile*>(obj);
+		if (proj) continue;
+
+		Explosion* expl = dynamic_cast<Explosion*>(obj);
+		if (expl) continue;
+
+		delete obj;
 	}
+
+	delete m_pPlayerShip;
 }
+
 
 
 void Level::LoadContent(ResourceManager& resourceManager)
@@ -212,11 +224,16 @@ void Level::Update(const GameTime& gameTime)
 		m_pSectors[i].clear();
 	}
 
-	m_gameObjectIt = m_gameObjects.begin();
-	for (; m_gameObjectIt != m_gameObjects.end(); m_gameObjectIt++)
+	for (GameObject* pGameObject : m_gameObjects)
 	{
-		GameObject *pGameObject = (*m_gameObjectIt);
 		pGameObject->Update(gameTime);
+
+		UpdateSectorPosition(pGameObject);
+
+		if (pGameObject->IsActive() && pGameObject->HasMask(CollisionType::Enemy))
+		{
+			m_hasHadActiveEnemy = true;
+		}
 	}
 
 	for (unsigned int i = 0; i < m_totalSectorCount; i++)
@@ -226,21 +243,16 @@ void Level::Update(const GameTime& gameTime)
 			CheckCollisions(m_pSectors[i]);
 		}
 	}
-	
-	for (Explosion *pExplosion : s_explosions) pExplosion->Update(gameTime);
 
-	if (!m_pPlayerShip->IsActive()) GetGameplayScreen()->Exit();
-
-	if (!m_hasHadActiveEnemy)  // once any enemy have become active - set to true. -- tommy
+	for (Explosion* pExplosion : s_explosions)
 	{
-		for (GameObject* pObject : m_gameObjects)
-		{
-			if (dynamic_cast<EnemyShip*>(pObject) && pObject->IsActive())
-			{
-				m_hasHadActiveEnemy = true;
-				break;
-			}
-		}
+		pExplosion->Update(gameTime);
+	}
+
+	// game ends if player dies
+	if (!m_pPlayerShip->IsActive())
+	{
+		GetGameplayScreen()->Exit();
 	}
 }
 
@@ -358,20 +370,27 @@ void Level::Draw(SpriteBatch& spriteBatch)
 	spriteBatch.End();
 }
 
+
 bool Level::IsComplete() const
 {
-	// Don’t allow victory until at least one enemy has actually become active
+	// Do not complete while boss is alive
+	if (m_bossAlive)
+		return false;
+
 	if (!m_hasHadActiveEnemy)
 		return false;
 
-	for (GameObject* pObject : m_gameObjects)
+	for (GameObject* obj : m_gameObjects)
 	{
-		if (dynamic_cast<EnemyShip*>(pObject) && pObject->IsActive())
+		if (obj->IsActive())
 			return false;
 	}
 
 	return true;
 }
+
+
+
 
 
 

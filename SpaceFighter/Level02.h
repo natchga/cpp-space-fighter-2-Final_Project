@@ -1,19 +1,20 @@
 #pragma once
-
 #include "Level.h"
 
 /** @brief The second level of the game. */
 class Level02 : public Level
 {
-
 public:
+    Level02(AircraftType type);
 
-	/** @brief Instantiate a level object. */
-	Level02(AircraftType type);
-	virtual ~Level02() {}
+    virtual void LoadContent(ResourceManager& resourceManager) override;
+    virtual void Update(const GameTime& gameTime) override;
+    virtual bool IsComplete() const override;
 
-	/** @brief Load the content for the level, including game objects and resources.
-		@param resourceManager A reference to the game's resource manager,
-		used for loading and managing game assets (resources). */
-	virtual void LoadContent(ResourceManager& resourceManager);
+protected:
+    bool m_bossAlive = true;
+    bool m_hasHadActiveEnemy = false;
+
+private:
+    void CheckEnemies(); // helper to check for active enemies & boss
 };
