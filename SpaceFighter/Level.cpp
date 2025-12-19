@@ -44,15 +44,37 @@ std::vector<Explosion *> Level::s_explosions;
 
 
 
+
+
+
 // Collision Callback Functions
 /** brief Callback function for when the player shoots an enemy. */
-void PlayerShootsEnemy(GameObject *pObject1, GameObject *pObject2)
+void PlayerShootsEnemy(GameObject* pObject1, GameObject* pObject2)
 {
-	bool m = pObject1->HasMask(CollisionType::Enemy);
-	EnemyShip *pEnemyShip = (EnemyShip *)((m) ? pObject1 : pObject2);
-	Projectile *pPlayerProjectile = (Projectile *)((!m) ? pObject1 : pObject2);
+	bool enemyFirst = pObject1->HasMask(CollisionType::Enemy);
+
+	EnemyShip* pEnemyShip = (EnemyShip*)((enemyFirst) ? pObject1 : pObject2);
+	Projectile* pPlayerProjectile = (Projectile*)((!enemyFirst) ? pObject1 : pObject2);
+
+	if (!pEnemyShip || !pPlayerProjectile) return;
+
 	pEnemyShip->Hit(pPlayerProjectile->GetDamage());
 	pPlayerProjectile->Deactivate();
+
+	// If Enemy died, notify player
+	if (!pEnemyShip->IsActive())
+	{
+		ScoreSystem::AddEnemyDestroyed();
+
+		Level* pLevel = GameObject::GetCurrentLevel();
+		if (!pLevel) return;
+
+		PlayerShip* pPlayer = pLevel->GetPlayerShip();
+		if (pPlayer)
+		{
+			pPlayer->IncrementKillCount();
+		}
+	}
 }
 
 /** brief Callback function for when the player collides with an enemy. */

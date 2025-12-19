@@ -1,10 +1,6 @@
 ﻿#include "PlayerShip.h"
-#include "Level.h"
-#include "AircraftType.h"
-#include "Projectile.h"
 #include "SingleShot.h"
 #include "SpreadShot.h"
-#include "EnemyShip.h" // @Emilien: I needed the EnemyShip.h to crack the 
 
 Texture* Projectile::s_pTexture = nullptr;
 
@@ -41,6 +37,7 @@ void PlayerShip::LoadContent(ResourceManager& resourceManager)
 	ConfineToScreen();
 	SetResponsiveness(0.1f);
 
+	m_pStealthFont = resourceManager.Load<Font>("Fonts\\Arialbd.ttf", false);  // Load a font for stealth countdown
 
 	// Load ship texture
 	switch (m_type)
@@ -54,7 +51,7 @@ void PlayerShip::LoadContent(ResourceManager& resourceManager)
 	case AircraftType::HeavyBomber:
 		m_pTexture = resourceManager.Load<Texture>("Textures\\HeavyBomberShip.png");
 		m_maxStealthDuration = 20.0f; // Longer duration
-		SetSpeed(25);
+		SetSpeed(100);
 		break;
 
 	case AircraftType::DefaultFighter:
@@ -76,9 +73,9 @@ void PlayerShip::LoadContent(ResourceManager& resourceManager)
 
 		// Keep your original paths
 		if (weapon->GetKey() == "Main Blaster")
-			bulletTexture = resourceManager.Load<Texture>("Textures\\Weapons\\SpreadShot.png");
+			bulletTexture = resourceManager.Load<Texture>("Textures\\Weapons\\SingleShot.png");
 		else if (weapon->GetKey() == "Spread Shot")
-			bulletTexture = resourceManager.Load<Texture>("Textures\\Weapons\\bulletttt.png");
+			bulletTexture = resourceManager.Load<Texture>("Textures\\Weapons\\SpreadShot.png");
 		else bulletTexture = resourceManager.Load<Texture>("Textures\\Bullet.png");
 
 		// Assign texture to all projectiles in the pool
@@ -152,27 +149,20 @@ void PlayerShip::HandleInput(const InputState& input)
 		SetDesiredDirection(direction);
 		if (type != TriggerType::None) FireWeapons(type);
 	}
+
 	//Check Input for Stealth Activation @By Emilien
 	// --- Stealth input only ---
-	if (input.IsKeyDown(Key::S) && !m_isStealthActive)
+	if (input.IsKeyDown(Key::S) && !m_isStealthActive && m_killsSinceLastStealth >= m_killsToActivateStealth)
 	{
-		/*if (m_killsSinceLastStealth >= m_killsToActivateStealth)
-		{*/
-			ActivateStealth();
-			m_killsSinceLastStealth = 0;
-
-			std::cout << "STEALTH ACTIVATED!\n";
-	/*	}
-		else
-		{
-			std::cout << "Not enough kills ("
-				<< m_killsSinceLastStealth << "/"
-				<< m_killsToActivateStealth << ")\n";
-		}*/
+		ActivateStealth();
+		m_killsSinceLastStealth = 0;
 	}
-
-
-
+	else
+	{
+		std::cout << "Not enough killed ("
+			<< m_killsSinceLastStealth << "/"
+			<< m_killsToActivateStealth << ")\n";
+	}
 
 
 }
@@ -231,26 +221,38 @@ void PlayerShip::Update(const GameTime& gameTime)
 
 }
 
+//==================Added by @Emilien========================
 
-//Set the Aircraft tranparancy when the stealth mode is activated
 void PlayerShip::Draw(SpriteBatch& spriteBatch)
 {
 	if (!IsActive())
 		return;
 
-	float alpha = 1.0f;
+	float alpha = m_isStealthActive ? 0.5f : 1.0f;
 
-	if (m_isStealthActive)
-		alpha = 0.5f; // 50% transparent
+	if (m_pTexture)
+	{
+		spriteBatch.Draw(
+			m_pTexture,
+			GetPosition(),
+			Color::WHITE * alpha,
+			m_pTexture->GetCenter()
+		);
+	}
+	if (m_isStealthActive && m_pStealthFont)
+	{
+		int secondsLeft = static_cast<int>(std::ceil(m_stealthDuration));
+		m_stealthCountdownText = "Stealth Mode: " + std::to_string(secondsLeft) + "s"; //Countdown display
 
-	spriteBatch.Draw(
-		m_pTexture,
-		GetPosition(),
-		Color::WHITE * alpha,
-		m_pTexture->GetCenter()
-	);
+		spriteBatch.DrawString(
+			m_pStealthFont,
+			&m_stealthCountdownText,  // persistent string pointer
+			GetPosition() - Vector2(0, m_pTexture ? m_pTexture->GetHeight() / 2 + 20 : 20),
+			Color::YELLOW
+		);
+	}
+
 }
-
 
 
 
@@ -264,7 +266,7 @@ void PlayerShip::SetResponsiveness(const float responsiveness)
 	m_responsiveness = Math::Clamp(0, 1, responsiveness);
 }
 
-//==================Added by @Emilien========================
+
 /*Activate  and Activate the Stealth*/
 void PlayerShip::ActivateStealth()
 {
@@ -281,68 +283,51 @@ void PlayerShip::ActivateStealth()
 void PlayerShip::DeactivateStealth()
 {
 	m_isStealthActive = false;
+
 }
 
-void PlayerShootsEnemy(Level* pLevel, GameObject* pObject1, GameObject* pObject2)
-{
-
-	bool isEnemyFirst = pObject1->HasMask(CollisionType::Enemy);
-	EnemyShip* pEnemyShip = dynamic_cast<EnemyShip*>(isEnemyFirst ? pObject1 : pObject2);
-	Projectile* pProjectile = dynamic_cast<Projectile*>(!isEnemyFirst ? pObject1 : pObject2);
-
-	if (!pEnemyShip || !pProjectile) return;
-
-	pEnemyShip->Hit(pProjectile->GetDamage());
-	pProjectile->Deactivate();
-
-	// If the enemy died, increment the player's kill count
-	if (!pEnemyShip->IsActive())
-	{
-		PlayerShip* pPlayer = pLevel->GetPlayerShip();
-		if (pPlayer)
-		{
-			pPlayer->IncrementKillCount(); // increment properly
-		}
-	}
-}
-
-// Prevent enemy collisions while in stealth
-void PlayerShip::CheckEnemyCollisions()
-{
-	// Intentionally empty for now **
-	// Stealth makes the player ignore enemy collisions
-}
-
-
+//countdown of the stealth mode
 void PlayerShip::UpdateStealth(float deltaTime)
 {
 	if (m_isStealthActive)
 	{
 		m_stealthDuration -= deltaTime;
 		if (m_stealthDuration <= 0.0f)
-		{
 			DeactivateStealth();
-		}
-		CheckEnemyCollisions();
+
 	}
 }
 
 
-
-// track kills since last stealth
 void PlayerShip::IncrementKillCount()
 {
-	m_killsSinceLastStealth++;
+	// Only increment count of enemies killed if stealth is NOT active
+    if (!m_isStealthActive)  
+    {
+        m_killsSinceLastStealth++;
 
-	std::cout << "Enemies Destroyed: "
-		<< m_killsSinceLastStealth << "/"
-		<< m_killsToActivateStealth << std::endl;
+        std::cout << "Kills for stealth: "
+                  << m_killsSinceLastStealth << "/"
+                  << m_killsToActivateStealth << std::endl;
+	}
+}
+
+// This return the ratio of how close the player is to being able to activate stealth
+float PlayerShip::GetStealthUnlockRatio() const
+{
+	if (m_killsToActivateStealth == 0) return 0.0f; // Avoid division by zero
+	// Return the ratio of kills
+	return static_cast<float>(m_killsSinceLastStealth) / m_killsToActivateStealth;
 }
 
 
 
-
-
+void PlayerShip::CheckEnemyCollisions()
+{
+	// skip collisions if stealth is active
+	if (m_isStealthActive)
+		return;
+}
 
 
 

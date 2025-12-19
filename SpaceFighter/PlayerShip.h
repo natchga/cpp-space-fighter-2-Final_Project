@@ -65,8 +65,7 @@ public:
 	virtual void ActivateStealth();
 	virtual void DeactivateStealth();
 	virtual void CheckEnemyCollisions();  // Implement a custom collision override for stealth
-	virtual void IncrementKillCount();// Count the enemies killed
-	void PlayerShootsEnemy(Level* pLevel, GameObject* pObject1, GameObject* pObject2);
+	virtual void IncrementKillCount(); // Count the enemies killed
 	virtual bool IsStealthActive() const { return m_isStealthActive; }
 	virtual void UpdateStealth(float deltaTime);
 
@@ -107,5 +106,8 @@ private:
 	int m_killsToActivateStealth = 3; // Activate stealth every 2 kills
 	AudioSample* m_pStealthSound = nullptr;
 	float GetStealthUnlockRatio() const;
+	//---------- For the countdown
+	Font* m_pStealthFont = nullptr; // Load a font for stealth countdown
+	std::string m_stealthCountdownText;
 
 };
