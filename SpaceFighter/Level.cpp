@@ -38,14 +38,7 @@ std::vector<Weapon*> Level::CreateWeaponsForAircraft(AircraftType type)
 }
 
 
-
-
 std::vector<Explosion *> Level::s_explosions;
-
-
-
-
-
 
 // Collision Callback Functions
 /** brief Callback function for when the player shoots an enemy. */
