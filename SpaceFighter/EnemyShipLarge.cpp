@@ -5,7 +5,7 @@
 EnemyShipLarge::EnemyShipLarge()
 {
     SetSpeed(40);
-    SetMaxHitPoints(10);
+    SetMaxHitPoints(50);
     SetCollisionRadius(60);
 }
 

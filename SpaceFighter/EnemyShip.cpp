@@ -38,9 +38,11 @@ void EnemyShip::Update(const GameTime& gameTime)
 
 void EnemyShip::Initialize(const Vector2 position, double delaySeconds)
 {
-    SetPosition(position);
     m_delaySeconds = delaySeconds;
+
     Ship::Initialize();
+
+    SetPosition(position);
 }
 
 void EnemyShip::Hit(float damage)

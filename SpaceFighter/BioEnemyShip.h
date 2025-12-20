@@ -25,9 +25,12 @@ public:
 		@param spriteBatch A reference to the game's sprite batch, used for rendering. */
 	virtual void Draw(SpriteBatch& spriteBatch);
 
+	//prevents BioEnemyShip from inheritating EnemyShip's Initialize function -- paul
+	virtual void Initialize(const Vector2 position, const double delaySeconds) override;
+
 
 private:
-
+	float m_spawnX = 0.0f;
 	Texture *m_pTexture = nullptr;
 
 };

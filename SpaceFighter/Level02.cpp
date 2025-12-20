@@ -17,7 +17,7 @@ void Level02::LoadContent(ResourceManager& resourceManager)
     m_hasHadActiveEnemy = false;
     m_bossAlive = true;
 
-    // --- Small/Bio Enemies ---
+    // Small/Bio Enemies
     Texture* pBioTex = resourceManager.Load<Texture>("Textures\\BioEnemyShip.png");
     float delay = 0.0f;
 
@@ -34,7 +34,7 @@ void Level02::LoadContent(ResourceManager& resourceManager)
         AddGameObject(pEnemy);
     }
 
-    // --- Medium Enemies ---
+    // Medium Enemies
     Texture* pMediumTex = resourceManager.Load<Texture>("Textures\\EnemyShipMedium.png");
     for (int i = 0; i < 5; i++)
     {
@@ -46,7 +46,7 @@ void Level02::LoadContent(ResourceManager& resourceManager)
         AddGameObject(pMedium);
     }
 
-    // --- Boss / Large Enemy ---
+    // Boss / Large Enemy
     Texture* pBossTex = resourceManager.Load<Texture>("Textures\\BioEnemyBoss.png");
     EnemyShipLarge* pBoss = new EnemyShipLarge();
     pBoss->SetTexture(pBossTex);
@@ -55,7 +55,6 @@ void Level02::LoadContent(ResourceManager& resourceManager)
     pBoss->Activate();
     AddGameObject(pBoss);
 
-    // --- Background ---
     SetBackground(resourceManager.Load<Texture>("Textures\\SpaceBackground02.png"));
 
     std::cout << "[Level02] LoadContent finished.\n";
